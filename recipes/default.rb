@@ -58,6 +58,8 @@ directory "#{node[:jenkins][:server][:home]}/plugins" do
   only_if { node[:jenkins][:server][:plugins].size > 0 }
 end
 
+puts "HERE!"
+
 node[:jenkins][:server][:plugins].each do |name|
   remote_file "#{node[:jenkins][:server][:home]}/plugins/#{name}.hpi" do
     source "#{node[:jenkins][:mirror]}/latest/#{name}.hpi"
@@ -67,9 +69,9 @@ node[:jenkins][:server][:plugins].each do |name|
     action :nothing
   end
 
-  http_request "HEAD #{node[:jenkins][:mirror]}/latest/#{name}.hpi" do
+  http_request "HEAD http://updates.jenkins-ci.org/latest/git.hpi" do ##{node[:jenkins][:mirror]}/latest/#{name}.hpi" do
     message ""
-    url "#{node[:jenkins][:mirror]}/latest/#{name}.hpi"
+    url "http://updates.jenkins-ci.org/latest/git.hpi"#"#{node[:jenkins][:mirror]}/latest/#{name}.hpi"
     action :head
     if File.exists?("#{node[:jenkins][:server][:home]}/plugins/#{name}.hpi")
       headers "If-Modified-Since" => File.mtime("#{node[:jenkins][:server][:home]}/plugins/#{name}.hpi").httpdate
